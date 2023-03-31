@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-import { GetStaticProps } from 'next';
+import { fork, serialize, allSettled } from 'effector';
+import { useUnit } from 'effector-react';
 
 import Page from '@components/page';
 import SponsorsGrid from '@components/sponsors-grid';
 import Header from '@components/header';
 import Layout from '@components/layout';
 
-import { getAllSponsors } from '@lib/cms-api';
-import { Sponsor } from '@lib/types';
+import { pageStarted } from '@model/app';
+import { $sponsors } from '@model/expo';
 import { META_DESCRIPTION } from '@lib/constants';
 
-type Props = {
-  sponsors: Sponsor[];
-};
-
-export default function ExpoPage({ sponsors }: Props) {
+export default function ExpoPage() {
   const meta = {
     title: 'Expo - Virtual Event Starter Kit',
     description: META_DESCRIPTION
   };
+
+  const sponsors = useUnit($sponsors);
 
   return (
     <Page meta={meta}>
@@ -45,12 +44,21 @@ export default function ExpoPage({ sponsors }: Props) {
   );
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const sponsors = await getAllSponsors();
+export const getStaticProps = async () => {
+  const scope = fork();
+
+  await allSettled(pageStarted, {
+    scope,
+    params: {
+      page: 'expo'
+    }
+  });
+
+  const values = serialize(scope);
 
   return {
     props: {
-      sponsors
+      values
     },
     revalidate: 60
   };
