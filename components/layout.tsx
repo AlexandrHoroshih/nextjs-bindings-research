@@ -15,6 +15,7 @@
  */
 
 import Link from 'next/link';
+import { useUnit } from 'effector-react';
 import cn from 'classnames';
 import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
@@ -28,6 +29,8 @@ import DemoButton from './hms/demo-cta';
 import RoomCta from './hms/demo-cta/room-cta';
 import { hmsConfig } from './hms/config';
 import ViewSource from './view-source';
+
+import { $count, up } from '@model/nav';
 
 type Props = {
   children: React.ReactNode;
@@ -47,6 +50,10 @@ export default function Layout({
   const router = useRouter();
   const activeRoute = router.asPath;
   const disableCta = ['/schedule', '/speakers', '/expo', '/jobs'];
+  const { count, countUp } = useUnit({
+    count: $count,
+    countUp: up
+  });
   return (
     <>
       <div className={styles.background}>
@@ -60,6 +67,9 @@ export default function Layout({
                   <Logo />
                 </a>
               </Link>
+            </div>
+            <div>
+              <button onClick={countUp}>Button pressed times {count}</button>
             </div>
             <div className={styles.tabs}>
               {NAVIGATION.map(({ name, route }) => (
