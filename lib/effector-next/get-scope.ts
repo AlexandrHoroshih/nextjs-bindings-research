@@ -1,7 +1,7 @@
 import { fork, Scope, serialize } from 'effector';
 
 type Values = Record<string, unknown>;
-export const getScope = typeof process === 'undefined' ? getClientScope : getServerScope;
+export const getScope = typeof window !== 'undefined' ? getClientScope : getServerScope;
 
 const _currentScope: Scope = fork();
 function getClientScope(values: Values) {
