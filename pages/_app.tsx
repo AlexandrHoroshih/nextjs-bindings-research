@@ -23,8 +23,12 @@ import NProgress from '@components/nprogress';
 import ResizeHandler from '@components/resize-handler';
 import { useEffect } from 'react';
 import { HMSRoomProvider } from '@100mslive/react-sdk';
+import { EffectorSsr } from '@lib/effector-next';
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps
+}: AppProps<{ values: Record<string, unknown> }>) {
   useEffect(() => {
     document.body.classList?.remove('loading');
   }, []);
@@ -32,9 +36,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <SSRProvider>
       <OverlayProvider>
         <HMSRoomProvider>
-          <Component {...pageProps} />
-          <ResizeHandler />
-          <NProgress />
+          <EffectorSsr values={pageProps.values}>
+            <Component {...pageProps} />
+            <ResizeHandler />
+            <NProgress />
+          </EffectorSsr>
         </HMSRoomProvider>
       </OverlayProvider>
     </SSRProvider>

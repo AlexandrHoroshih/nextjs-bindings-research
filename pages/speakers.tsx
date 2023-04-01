@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-import { GetStaticProps } from 'next';
+import { fork, serialize, allSettled } from 'effector';
+import { useUnit } from 'effector-react';
 
 import Page from '@components/page';
 import SpeakersGrid from '@components/speakers-grid';
 import Layout from '@components/layout';
 import Header from '@components/header';
 
-import { getAllSpeakers } from '@lib/cms-api';
-import { Speaker } from '@lib/types';
+import { pageStarted } from '@model/app';
+import { $speakers } from '@model/speakers';
 import { META_DESCRIPTION } from '@lib/constants';
 
-type Props = {
-  speakers: Speaker[];
-};
-
-export default function Speakers({ speakers }: Props) {
+export default function Speakers() {
   const meta = {
     title: 'Speakers - Virtual Event Starter Kit',
     description: META_DESCRIPTION
   };
+  const speakers = useUnit($speakers);
+
   return (
     <Page meta={meta}>
       <Layout>
@@ -44,13 +43,23 @@ export default function Speakers({ speakers }: Props) {
   );
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const speakers = await getAllSpeakers();
+export const getServerSideProps = async () => {
+  const scope = fork();
+
+  await allSettled(pageStarted, {
+    scope,
+    params: {
+      page: 'speakers'
+    }
+  });
+
+  const values = serialize(scope);
+
+  console.log(values);
 
   return {
     props: {
-      speakers
-    },
-    revalidate: 60
+      values
+    }
   };
 };

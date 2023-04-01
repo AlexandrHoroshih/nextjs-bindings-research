@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-import { GetStaticProps } from 'next';
+import { fork, serialize, allSettled } from 'effector';
+import { useUnit } from 'effector-react';
 
 import Page from '@components/page';
 import JobsGrid from '@components/jobs-grid';
 import Layout from '@components/layout';
 import Header from '@components/header';
 
-import { getAllJobs } from '@lib/cms-api';
-import { Job } from '@lib/types';
+import { pageStarted } from '@model/app';
+import { $jobs } from '@model/jobs';
 import { META_DESCRIPTION } from '@lib/constants';
 
-type Props = {
-  jobs: Job[];
-};
-
-export default function Jobs({ jobs }: Props) {
+export default function Jobs() {
   const meta = {
     title: 'Career Fair - Virtual Event Starter Kit',
     description: META_DESCRIPTION
   };
+  const jobs = useUnit($jobs);
 
   return (
     <Page meta={meta}>
@@ -45,12 +43,21 @@ export default function Jobs({ jobs }: Props) {
   );
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const jobs = await getAllJobs();
+export const getStaticProps = async () => {
+  const scope = fork();
+
+  await allSettled(pageStarted, {
+    scope,
+    params: {
+      page: 'jobs'
+    }
+  });
+
+  const values = serialize(scope);
 
   return {
     props: {
-      jobs
+      values
     },
     revalidate: 60
   };

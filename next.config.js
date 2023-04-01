@@ -22,6 +22,7 @@ module.exports = {
       'images.ctfassets.net',
       'images.prismic.io',
       'cdn.aglty.io',
+      'cloudflare-ipfs.com',
       'localhost' // For Strapi
     ],
     imageSizes: [24, 64, 300]

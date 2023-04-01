@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-import { GetStaticProps } from 'next';
+import { fork, serialize, allSettled } from 'effector';
+import { useUnit } from 'effector-react';
 
 import Page from '@components/page';
 import Schedule from '@components/schedule';
 import Layout from '@components/layout';
 import Header from '@components/header';
 
-import { getAllStages } from '@lib/cms-api';
-import { Stage } from '@lib/types';
+import { pageStarted } from '@model/app';
+import { $stages } from '@model/schedule';
 import { META_DESCRIPTION } from '@lib/constants';
 
-type Props = {
-  allStages: Stage[];
-};
-
-export default function SchedulePage({ allStages }: Props) {
+export default function SchedulePage() {
   const meta = {
     title: 'Schedule - Virtual Event Starter Kit',
     description: META_DESCRIPTION
   };
+
+  const allStages = useUnit($stages);
 
   return (
     <Page meta={meta}>
@@ -45,12 +44,21 @@ export default function SchedulePage({ allStages }: Props) {
   );
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const allStages = await getAllStages();
+export const getStaticProps = async () => {
+  const scope = fork();
+
+  await allSettled(pageStarted, {
+    scope,
+    params: {
+      page: 'schedule'
+    }
+  });
+
+  const values = serialize(scope);
 
   return {
     props: {
-      allStages
+      values
     },
     revalidate: 60
   };
