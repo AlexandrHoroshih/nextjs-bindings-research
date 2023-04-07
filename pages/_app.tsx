@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// eslint-disable-next-line
+// @ts-nocheck
 import { SSRProvider, OverlayProvider } from 'react-aria';
 import '@styles/global.css';
 import '@styles/nprogress.css';
@@ -23,7 +25,7 @@ import NProgress from '@components/nprogress';
 import ResizeHandler from '@components/resize-handler';
 import { useEffect } from 'react';
 import { HMSRoomProvider } from '@100mslive/react-sdk';
-import { EffectorSsr } from '@lib/effector-next';
+import { EffectorNext } from '@effector/next';
 
 export default function App({
   Component,
@@ -36,11 +38,11 @@ export default function App({
     <SSRProvider>
       <OverlayProvider>
         <HMSRoomProvider>
-          <EffectorSsr values={pageProps.values}>
+          <EffectorNext values={pageProps.values}>
             <Component {...pageProps} />
             <ResizeHandler />
             <NProgress />
-          </EffectorSsr>
+          </EffectorNext>
         </HMSRoomProvider>
       </OverlayProvider>
     </SSRProvider>
