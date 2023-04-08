@@ -22,9 +22,9 @@ import SponsorsGrid from '@components/sponsors-grid';
 import Header from '@components/header';
 import Layout from '@components/layout';
 
-import { pageStarted } from '@model/app';
-import { $sponsors } from '@model/expo';
+import { $sponsors, createExpoGssp } from '@model/expo';
 import { META_DESCRIPTION } from '@lib/constants';
+import { pageStarted } from '@model/app';
 
 export default function ExpoPage() {
   const meta = {
@@ -44,22 +44,6 @@ export default function ExpoPage() {
   );
 }
 
-export const getStaticProps = async () => {
-  const scope = fork();
-
-  await allSettled(pageStarted, {
-    scope,
-    params: {
-      page: 'expo'
-    }
-  });
-
-  const values = serialize(scope);
-
-  return {
-    props: {
-      values
-    },
-    revalidate: 60
-  };
-};
+export const getServerSide = createExpoGssp({
+  pageEvent: pageStarted.prepend<any>(() => ({ page: 'expo' }))
+});

@@ -32,7 +32,8 @@ export function matchPage({ page }: { page: PageType }) {
   return {
     opened,
     $open,
-    closed
+    closed,
+    open: pageStarted.prepend(() => ({ page }))
   };
 }
 

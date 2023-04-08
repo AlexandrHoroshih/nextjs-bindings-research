@@ -22,8 +22,7 @@ import SpeakersGrid from '@components/speakers-grid';
 import Layout from '@components/layout';
 import Header from '@components/header';
 
-import { pageStarted } from '@model/app';
-import { $speakers } from '@model/speakers';
+import { $speakers, createSpeakersGssp } from '@model/speakers';
 import { META_DESCRIPTION } from '@lib/constants';
 
 export default function Speakers() {
@@ -43,23 +42,13 @@ export default function Speakers() {
   );
 }
 
-export const getServerSideProps = async () => {
-  const scope = fork();
+const gsspBody = createSpeakersGssp();
+export const getServerSideProps = async (...args: any[]) => {
+  console.log('call', args);
 
-  await allSettled(pageStarted, {
-    scope,
-    params: {
-      page: 'speakers'
-    }
-  });
+  // @ts-expect-error kekpek
+  const result = await gsspBody(...args);
+  console.log('result', result)
 
-  const values = serialize(scope);
-
-  console.log(values);
-
-  return {
-    props: {
-      values
-    }
-  };
+  return result;
 };

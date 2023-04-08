@@ -26,11 +26,9 @@ import ResizeHandler from '@components/resize-handler';
 import { useEffect } from 'react';
 import { HMSRoomProvider } from '@100mslive/react-sdk';
 import { EffectorNext } from '@effector/next';
+import { withEffector } from 'nextjs-effector';
 
-export default function App({
-  Component,
-  pageProps
-}: AppProps<{ values: Record<string, unknown> }>) {
+function App({ Component, pageProps }: AppProps<{ values: Record<string, unknown> }>) {
   useEffect(() => {
     document.body.classList?.remove('loading');
   }, []);
@@ -48,3 +46,5 @@ export default function App({
     </SSRProvider>
   );
 }
+
+export default withEffector(App);

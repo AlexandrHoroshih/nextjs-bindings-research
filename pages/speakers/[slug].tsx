@@ -28,7 +28,7 @@ type Props = {
   speaker: Speaker;
 };
 
-export default function SpeakerPage({ speaker }: Props) {
+export default function SpeakerPage() {
   const meta = {
     title: 'Demo - Virtual Event Starter Kit',
     description: META_DESCRIPTION
@@ -37,37 +37,8 @@ export default function SpeakerPage({ speaker }: Props) {
   return (
     <Page meta={meta}>
       <Layout>
-        <SpeakerSection speaker={speaker} />
+        kekpek
       </Layout>
     </Page>
   );
 }
-
-export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-  const slug = params?.slug;
-  const speakers = await getAllSpeakers();
-  const currentSpeaker = speakers.find((s: Speaker) => s.slug === slug) || null;
-
-  if (!currentSpeaker) {
-    return {
-      notFound: true
-    };
-  }
-
-  return {
-    props: {
-      speaker: currentSpeaker
-    },
-    revalidate: 60
-  };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const speakers = await getAllSpeakers();
-  const slugs = speakers.map((s: Speaker) => ({ params: { slug: s.slug } }));
-
-  return {
-    paths: slugs,
-    fallback: false
-  };
-};

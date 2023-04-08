@@ -23,7 +23,7 @@ import Layout from '@components/layout';
 import Header from '@components/header';
 
 import { pageStarted } from '@model/app';
-import { $jobs } from '@model/jobs';
+import { $jobs, createJobsGSP } from '@model/jobs';
 import { META_DESCRIPTION } from '@lib/constants';
 
 export default function Jobs() {
@@ -43,22 +43,4 @@ export default function Jobs() {
   );
 }
 
-export const getStaticProps = async () => {
-  const scope = fork();
-
-  await allSettled(pageStarted, {
-    scope,
-    params: {
-      page: 'jobs'
-    }
-  });
-
-  const values = serialize(scope);
-
-  return {
-    props: {
-      values
-    },
-    revalidate: 60
-  };
-};
+export const getStaticProps = createJobsGSP()

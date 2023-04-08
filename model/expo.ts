@@ -4,6 +4,7 @@ import { getAllSponsors } from '@lib/cms-api';
 import { Sponsor } from '@lib/types';
 
 import { matchPage, notifyUserFx } from './app';
+import { createGSSPFactory } from 'nextjs-effector';
 
 const expoPage = matchPage({
   page: 'expo'
@@ -27,4 +28,9 @@ sample({
   clock: getAllSponsorsFx.fail,
   fn: () => 'Could not get sponsors((',
   target: notifyUserFx
+});
+
+export const createExpoGssp = createGSSPFactory({
+  // Will be called on first request and on each page navigation (always on server side)
+  sharedEvents: [expoPage.open]
 });

@@ -2,6 +2,7 @@ import { createStore, sample, createEffect } from 'effector';
 
 import { getAllJobs } from '@lib/cms-api';
 import { Job } from '@lib/types';
+import { createGSPFactory } from 'nextjs-effector';
 
 import { matchPage, notifyUserFx } from './app';
 
@@ -28,3 +29,7 @@ sample({
   fn: () => 'Could not get jobs((',
   target: notifyUserFx
 });
+
+export const createJobsGSP = createGSPFactory({
+  sharedEvents: [jobsPage.open]
+})
